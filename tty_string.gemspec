@@ -1,10 +1,10 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "tty-string/version"
+require "tty_string/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "tty-string"
+  spec.name          = "tty_string"
   spec.version       = TTYString::VERSION
   spec.authors       = ["Dana Sherson"]
   spec.email         = ["robot@dana.sh"]
