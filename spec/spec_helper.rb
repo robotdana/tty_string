@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "tty/string"
+require "tty_string"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
