@@ -85,7 +85,15 @@ RSpec.describe TTYString do
           expect("abc\e[Ad").to render_as "abcd"
         end
       end
-      describe 'B'
+      describe 'B' do
+        it 'moves the cursor down' do
+          expect("a\e[Bb").to render_as "a\n b"
+        end
+
+        it 'moves the cursor down n lines' do
+          expect("a\e[3Bb").to render_as "a\n\n\n b"
+        end
+      end
       describe 'C' do
         it 'moves the cursor forward' do
           expect("a\e[Cb").to render_as "a b"
@@ -108,8 +116,22 @@ RSpec.describe TTYString do
           expect("abcdefg\e[3Dh").to render_as "abcdhfg"
         end
       end
-      describe 'E'
-      describe 'F'
+      describe 'E' do
+        it 'moves the cursor to the beginning of the line 1 line down' do
+          expect("abcd\e[2D\e[Efg").to render_as "abcd\nfg"
+        end
+        it 'moves the cursor to the beginning of the line n lines down' do
+          expect("abcd\e[2D\e[2Efg").to render_as "abcd\n\nfg"
+        end
+      end
+      describe 'F' do
+        it 'moves the cursor to the beginning of the line 1 line p' do
+          expect("abcd\nef\e[Fgh").to render_as "ghcd\nef"
+        end
+        it 'moves the cursor to the beginning of the line n lines up' do
+          expect("abcd\n\n\nef\e[2Fgh").to render_as "abcd\ngh\n\nef"
+        end
+      end
       describe 'G'
       describe 'H'
       describe 'J'

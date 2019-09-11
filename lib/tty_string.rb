@@ -80,6 +80,20 @@ class TTYString
     cursor.left(n)
   end
 
+  def csi_E(n = 1)
+    cursor.down(n)
+    cursor.col = 0
+  end
+
+  def csi_F(n = 1)
+    cursor.up(n)
+    cursor.col = 0
+  end
+
+  def csi_G(n = 1)
+
+  end
+
   def slash_b
     cursor.left
     screen.clear_at_cursor
