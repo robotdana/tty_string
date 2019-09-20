@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.74.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.4.1'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.35.0'
+  spec.add_development_dependency 'pry', '~> 0.12.2'
 end

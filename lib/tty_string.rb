@@ -7,10 +7,10 @@ require_relative 'tty_string/screen'
 # Renders a string taking into ANSI escape codes and \t\r\n etc
 # Usage: TTYString.new("this\r\e[Kthat").to_s => "that"
 class TTYString
-  def initialize(input_string, ignore_color: false)
+  def initialize(input_string, clear_style: true)
     @scanner = StringScanner.new(input_string)
     @screen = Screen.new
-    @ignore_color = ignore_color
+    @clear_style = clear_style
   end
 
   def to_s
@@ -22,7 +22,7 @@ class TTYString
 
   attr_reader :screen
   attr_reader :scanner
-  attr_reader :ignore_color
+  attr_reader :clear_style
 
   def render
     slash || rest until scanner.eos?
@@ -49,16 +49,22 @@ class TTYString
   def slash_e # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     return if scanner.eos?
 
-    return unless scanner.skip(/\[/)
-
-    args = []
-    while scanner.scan(/\d+/)
-      args << scanner.matched
-      scanner.skip(/;/)
-    end
-
-    if scanner.scan(/[ABCDEFGHJKfm]/)
-      raise "unrecognised csi code \\e[#{args.join(';')}#{scanner.peek(1)}"
+    if scanner.skip(/\[/)
+      args = []
+      if scanner.scan(/((\d+);?|;)*[ABCDEFGHJKfm]/)
+        args = scanner.matched.split(';')
+        cmd = args.last.slice!(-1)
+        case cmd
+        when 'H', 'f'
+          send(:"csi_#{cmd}", *args.slice(0, 2).map { |x| x.empty? ? 1 : x.to_i })
+        when 'm'
+          csi_m(*args.reject(&:empty?).map(&:to_i)))
+        else
+          send(:"csi_#{cmd}", *args.slice(0, 1).reject(&:empty?).map(&:to_i))
+        end
+      else
+        raise "unrecognised csi code \\e[#{args.join(';')}#{scanner.peek(1)}"
+      end
     end
 
     send(:"csi_#{scanner.matched}", *args)
@@ -75,7 +81,7 @@ class TTYString
   end
 
   def csi_m(*args)
-    screen.write("\e[#{args.join(';')}m") unless ignore_color
+    screen.write("\e[#{args.join(';')}m") unless clear_style
   end
 
   def csi_A(lines = 1)
@@ -104,6 +110,39 @@ class TTYString
     cursor.col = 0
   end
   # rubocop:enable Naming/MethodName
+
+  def csi_E(n = 1)
+    cursor.down(n)
+    cursor.col = 0
+  end
+
+  def csi_F(n = 1)
+    cursor.up(n)
+    cursor.col = 0
+  end
+
+  def csi_G(n = 1)
+    cursor.col = n - 1
+  end
+
+  def csi_H(n = 1, m = 1)
+    cursor.row = n - 1
+    cursor.col = m - 1
+  end
+  alias_method :csi_f, :csi_H
+
+  def csi_J(n = 0)
+    case n
+    when 0
+      screen.clear_lines_after
+      screen.clear_line_forward
+    when 1
+      screen.clear_lines_before
+      screen.clear_line_backward
+    when 2, 3
+      screen.clear
+    end
+  end
 
   def slash_b
     cursor.left

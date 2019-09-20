@@ -40,12 +40,16 @@ class TTYString
       screen[row] = []
     end
 
+    def clear
+      @screen = []
+    end
+
     def clear_lines_before
       screen.fill([], 0...row)
     end
 
     def clear_lines_after
-      screen.fill([], (row + 1)..-1)
+      screen.slice!((row + 1)..-1)
     end
 
     def write(string)
