@@ -1,0 +1,3 @@
+[submodule "rubocop_yml"]
+	path = rubocop_yml
+	url = https://github.com/robotdana/rubocop_yml.git
