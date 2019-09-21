@@ -270,6 +270,24 @@ RSpec.describe TTYString do
     end
   end
 
+  describe 'README.md usage examples' do
+    it 'describes basic usage' do
+      expect(
+        described_class.new("th\ta string\e[3Gis is").to_s
+      ).to eq 'this is a string'
+    end
+    it 'suppresses color codes' do
+      expect(
+        described_class.new("th\ta \e[31mstring\e[0m\e[3Gis is").to_s
+      ).to eq 'this is a string'
+    end
+    it 'optionally does not suppress color codes' do
+      expect(
+        described_class.new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s # rubocop:disable Metrics/LineLength
+      ).to eq "this is a \e[31mstring\e[0m"
+    end
+  end
+
   it 'has a version number' do
     expect(TTYString::VERSION).not_to be nil
   end
