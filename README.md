@@ -1,5 +1,7 @@
 # TTYString
 
+[![Build Status](https://travis-ci.org/robotdana/tty_string.svg?branch=master)](https://travis-ci.org/robotdana/tty_string)
+
 Render a string like your terminal does by parsing ANSI TTY codes.
 This is useful for testing CLI's
 
