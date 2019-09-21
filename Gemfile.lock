@@ -50,14 +50,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.16)
-  pry (~> 0.12.2)
+  bundler (~> 2.0)
+  pry (~> 0.12)
   rake (~> 10.0)
   rspec (~> 3.0)
-  rubocop (~> 0.74.0)
-  rubocop-performance (~> 1.4.1)
-  rubocop-rspec (~> 1.35.0)
+  rubocop (~> 0.74)
+  rubocop-performance (~> 1.4)
+  rubocop-rspec (~> 1.35)
   tty_string!
 
 BUNDLED WITH
-   1.16.0
+   2.0.2
