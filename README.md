@@ -1,8 +1,26 @@
 # TTYString
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tty_string`. To experiment with that code, run `bin/console` for an interactive prompt.
+Render a string like your terminal does by parsing ANSI TTY codes.
+This is useful for testing CLI's
 
-TODO: Delete this and the text above, and describe your gem
+Supported codes
+
+ - \b
+ - \e[A
+ - \e[B
+ - \e[C
+ - \e[D
+ - \e[E
+ - \e[F
+ - \e[G
+ - \e[H
+ - \e[J
+ - \e[K
+ - \e[f
+ - \e[m
+ - \n
+ - \r
+ - \t
 
 ## Installation
 
@@ -22,7 +40,18 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```
+TTYString.new("th\ta string\e[3Gis is").to_s => "this is a string"
+```
+
+Styling information is suppressed by default:
+```
+TTYString.new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s => "this is a string"
+```
+But can be passed through:
+```
+TTYString.new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s => "this is a \e[31mstring\e[0m"
+```
 
 ## Development
 

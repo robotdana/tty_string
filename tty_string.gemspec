@@ -10,12 +10,12 @@ Gem::Specification.new do |spec|
   spec.authors = ['Dana Sherson']
   spec.email = ['robot@dana.sh']
 
-  spec.summary = 'Render a string using ansi escape sequences'
-  spec.homepage = "TODO: Put your gem's website or public repo URL here."
+  spec.summary = 'Render a string using ANSI TTY codes'
+  spec.homepage = "https://github.com/robotdana/tty_string"
   spec.license = 'MIT'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+    f.match(%r{^(test|spec|features|*rubocop*|*travis*|*git*|*rspec*)/})
   end
   spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
