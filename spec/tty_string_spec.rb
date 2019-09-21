@@ -77,7 +77,6 @@ RSpec.describe TTYString do
     end
 
     describe '\e[' do
-      # rubocop:disable RSpec/NestedGroups
       describe 'A' do
         it 'moves the cursor up a line' do
           expect("abc\nd\e[Ae").to render_as "aec\nd"
@@ -134,15 +133,7 @@ RSpec.describe TTYString do
         it 'moves the cursor to the beginning of the line 1 line down' do
           expect("abcd\e[2D\e[Efg").to render_as "abcd\nfg"
         end
-        it 'moves the cursor to the beginning of the line n lines down' do
-          expect("abcd\e[2D\e[2Efg").to render_as "abcd\n\nfg"
-        end
-      end
 
-      describe 'E' do
-        it 'moves the cursor to the beginning of the line 1 line down' do
-          expect("abcd\e[2D\e[Efg").to render_as "abcd\nfg"
-        end
         it 'moves the cursor to the beginning of the line n lines down' do
           expect("abcd\e[2D\e[2Efg").to render_as "abcd\n\nfg"
         end
@@ -152,6 +143,7 @@ RSpec.describe TTYString do
         it 'moves the cursor to the beginning of the line 1 line p' do
           expect("abcd\nef\e[Fgh").to render_as "ghcd\nef"
         end
+
         it 'moves the cursor to the beginning of the line n lines up' do
           expect("abcd\n\n\nef\e[2Fgh").to render_as "abcd\ngh\n\nef"
         end
@@ -164,10 +156,6 @@ RSpec.describe TTYString do
 
         it 'defalts to 1' do
           expect("abc\e[Gd").to render_as 'dbc'
-        end
-
-        it 'can be given too many ;;;;;' do
-          expect("abc\e[;;;;;;;;;Gd").to render_as 'dbc'
         end
       end
 
@@ -185,26 +173,28 @@ RSpec.describe TTYString do
           expect("abc\ndef\e[;2HB").to render_as "aBc\ndef"
           expect("abc\ndef\e[2;HD").to render_as "abc\nDef"
         end
-
-        it 'can be given too many ;;;' do
-          expect("abc\ndef\e[;2;;;;;;;;;;;;HB").to render_as "aBc\ndef"
-          expect("abc\ndef\e[2;;;;;;;;;;;;;HD").to render_as "abc\nDef"
-        end
       end
 
       describe 'J' do
         it 'deletes from cursor to end of screen if n is 0' do
           expect("abc\ndef\nghi\e[2;2H\e[0J").to render_as "abc\nd"
         end
+
         it 'deletes from cursor to end of screen if n is missing' do
           expect("abc\ndef\nghi\e[2;2H\e[J").to render_as "abc\nd"
         end
+
         it 'deletes from cursor to beginning of screen if n is 1' do
           expect("abc\ndef\nghi\e[2;2H\e[1J").to render_as "\n  f\nghi"
         end
+
         it 'deletes entire screen if n is 2 or 3' do
           expect("abc\ndef\nghi\e[2;2H\e[2J").to render_as ''
           expect("abc\ndef\nghi\e[2;2H\e[3J").to render_as ''
+        end
+
+        it 'returns the original text when given unrecognised arguments' do
+          expect("abc\ndef\nghi\e[2;2H\e[4J").to render_as "abc\nd\e[4J\nghi"
         end
       end
 
@@ -224,6 +214,10 @@ RSpec.describe TTYString do
         it 'clears the line with arg 2' do
           expect("abcd\e[2K").to render_as ''
         end
+
+        it 'returns the original text when given unrecognised arguments' do
+          expect("abc\ndef\nghi\e[2;2H\e[3K").to render_as "abc\nd\e[3K\nghi"
+        end
       end
 
       describe 'f' do
@@ -239,11 +233,6 @@ RSpec.describe TTYString do
         it 'defaults to 1 for when only 1 argument used' do
           expect("abc\ndef\e[;2fB").to render_as "aBc\ndef"
           expect("abc\ndef\e[2;fD").to render_as "abc\nDef"
-        end
-
-        it 'can be given too many ;;;' do
-          expect("abc\ndef\e[;2;;;;;;;;;;;;fB").to render_as "aBc\ndef"
-          expect("abc\ndef\e[2;;;;;;;;;;;;;fD").to render_as "abc\nDef"
         end
       end
 
@@ -266,7 +255,26 @@ RSpec.describe TTYString do
             .to render_with_style_as "\e[31mred\e[36;37;38;0m plain"
         end
       end
-      # rubocop:enable RSpec/NestedGroups
+
+      describe 'S' do
+        it 'scrolls up, inserting newlines at the end' do
+          expect("abc\ndef\e[S").to render_as "def\n"
+        end
+
+        it 'can be given an argument for the number of rows' do
+          expect("abc\ndef\nghi\njkl\e[3S").to render_as "jkl\n\n\n"
+        end
+      end
+
+      describe 'T' do
+        it 'scrolls down, inserting newlines at the beginning' do
+          expect("abc\ndef\e[T").to render_as "\nabc"
+        end
+
+        it 'can be given an argument for the number of rows' do
+          expect("abc\ndef\nghi\njkl\e[3T").to render_as "\n\n\nabc"
+        end
+      end
     end
   end
 
@@ -276,14 +284,17 @@ RSpec.describe TTYString do
         described_class.new("th\ta string\e[3Gis is").to_s
       ).to eq 'this is a string'
     end
+
     it 'suppresses color codes' do
       expect(
         described_class.new("th\ta \e[31mstring\e[0m\e[3Gis is").to_s
       ).to eq 'this is a string'
     end
+
     it 'optionally does not suppress color codes' do
       expect(
-        described_class.new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s # rubocop:disable Metrics/LineLength
+        described_class
+          .new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s
       ).to eq "this is a \e[31mstring\e[0m"
     end
   end

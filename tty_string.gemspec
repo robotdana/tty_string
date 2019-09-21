@@ -14,11 +14,14 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/robotdana/tty_string'
   spec.license = 'MIT'
 
-  spec.files = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features|\.?rubocop|\.travis|\.git|\.rspec)/})
-  end
-  spec.bindir = 'exe'
-  spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.files = Dir.glob('{lib}/**/*') + %w{
+    CHANGELOG.md
+    Gemfile
+    LICENSE.txt
+    README.md
+    spellr.gemspec
+  }
+  spec.required_ruby_version = '>= 2.4'
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
@@ -28,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.74'
   spec.add_development_dependency 'rubocop-performance', '~> 1.4'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.35'
+  spec.add_development_dependency 'simplecov', '~> 0.18.5'
 end

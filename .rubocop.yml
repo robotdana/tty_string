@@ -1,1 +1,177 @@
-rubocop_yml/rubocop.yml
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  Exclude:
+    - db/schema*
+    - .bundle/**/*
+    - tmp/**/*
+    - vendor/**/*
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  TargetRubyVersion: 2.4
+
+# all of the layout customisations are because we prefer indentation to be
+# always consistently 2 spaces, for blocks, scopes, multiline expressions, etc
+# e.g.
+# class Klass
+#   def method(arg1,
+#     arg2)
+#     value = if arg1 == 'value' && arg2 == 'value'
+#       method2
+#         .method(arg_a, arg_b,
+#           arg_c, arg_d, keyword1: true,
+#           keyword2: true) do
+#             @last = [
+#               arg_a, arg_b,
+#               arg_c, arg_d
+#             ]
+#           end
+#     end
+#     value
+#   end
+# end
+
+# one of these days i'll fix this rubocop-hq/rubocop#6291
+Layout/HashAlignment:
+  EnforcedLastArgumentHashStyle: always_ignore
+
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/BlockAlignment:
+  EnforcedStyleAlignWith: start_of_block
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: start_of_line
+
+# Aligning Assignments, etc makes diffs noisy
+Layout/ExtraSpacing:
+  AllowForAlignment: false
+
+Layout/FirstArrayElementLineBreak:
+  Enabled: true
+
+Layout/FirstHashElementLineBreak:
+  Enabled: true
+
+Layout/FirstArgumentIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+# hanging assignment looks lost
+Layout/MultilineAssignmentLayout:
+  EnforcedStyle: same_line
+
+# this changes my preferred:
+#   value = if thing1 &&
+#     thing2
+# to:
+#   value = if thing1 &&
+#       thing2
+# even though the IndentationWidth is 2
+# but it's right most of the time so I put up with it
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Temporarily disable this spec as a recent change has broken it:
+# https://github.com/rubocop-hq/rubocop/issues/6254
+Layout/RescueEnsureAlignment:
+  Enabled: false
+
+Metrics:
+  CountComments: false
+
+Metrics/BlockLength:
+  ExcludedMethods:
+    - configure
+    - describe
+    - context
+    - it
+
+Metrics/LineLength:
+  IgnoreCopDirectives: true
+
+Metrics/MethodLength:
+  Max: 5
+
+RSpec:
+  Enabled: true
+  Include:
+    - 'spec/**/*.rb'
+
+RSpec/DescribeClass:
+  Enabled: false
+
+# I misuse matchers often
+RSpec/ExpectActual:
+  Enabled: false
+
+# Multiple expectations are useful
+# checking you've partially achieved something on the way to completely achieving it is useful for debugging failures
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# It should be obvious from context. Chill out rubocop
+RSpec/NamedSubject:
+  Enabled: false
+
+Style/CollectionMethods:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+# [a, b].include?(x) is more unclear than a == x || b == x
+Style/MultipleComparison:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: '{}'
+    '%w': '{}'
+    '%W': '{}'
+    '%i': '{}'
+    '%I': '{}'
+    '%r': '{}'
+
+Style/SafeNavigation:
+  Enabled: true
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+# this wants less descriptive names
+Style/SingleLineBlockParams:
+  Enabled: false
+
+# i don't like the inconsistency of these rules
+Style/WordArray:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+RSpec/NestedGroups:
+  Max: 4

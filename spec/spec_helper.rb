@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
+require 'simplecov'
+if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.5')
+  SimpleCov.enable_coverage :branch
+  SimpleCov.minimum_coverage line: 100, branch: 100
+else
+  SimpleCov.minimum_coverage line: 100
+end
+SimpleCov.start
+
 require 'tty_string'
 
 RSpec.configure do |config|

@@ -7,11 +7,11 @@ require_relative 'tty_string/parser'
 class TTYString
   def initialize(input_string, clear_style: true)
     @parser = Parser.new(input_string)
-    @clear_style = clear_style
+    @parser.clear_style = clear_style
   end
 
   def to_s
-    parser.render(clear_style: clear_style)
+    parser.render
   end
 
   private

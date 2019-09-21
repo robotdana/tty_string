@@ -46,6 +46,16 @@ class TTYString
       @screen = []
     end
 
+    def scroll_up
+      screen.push([])
+      screen.shift
+    end
+
+    def scroll_down
+      screen.unshift([])
+      screen.pop
+    end
+
     def clear_lines_before
       screen.fill([], 0...row)
     end

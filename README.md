@@ -2,27 +2,34 @@
 
 [![Build Status](https://travis-ci.org/robotdana/tty_string.svg?branch=master)](https://travis-ci.org/robotdana/tty_string)
 
-Render a string like your terminal does by parsing ANSI TTY codes.
+Render a string like your terminal does by (narrowly) parsing ANSI TTY codes.
 This is useful for testing CLI's
+
+Various terminals are wildly variously permissive with what they accept,
+so this doesn't even try to cover all possible cases,
+instead it covers the narrowest possible case, and leaves the codes in place when unrecognised
 
 Supported codes
 
- - `\b`
- - `\e[A`
- - `\e[B`
- - `\e[C`
- - `\e[D`
- - `\e[E`
- - `\e[F`
- - `\e[G`
- - `\e[H`
- - `\e[J`
- - `\e[K`
- - `\e[f`
- - `\e[m`
- - `\n`
- - `\r`
- - `\t`
+ - `\a` # BEL, just removed.
+ - `\b` # backspace
+ - `\n` # newline
+ - `\r` # return, jump to the start of the line
+ - `\t` # tab, move to the next multiple-of-8 column
+ - `\e[nA` # move up n lines, default: 1
+ - `\e[nB` # move down n lines, default: 1
+ - `\e[nC` # move right n columns, default: 1
+ - `\e[nD` # move left n columns, default: 1
+ - `\e[nE` # move down n lines, and to the start of the line, default: 1
+ - `\e[nF` # move up n lines, and to the start of the line, default: 1
+ - `\e[nG` # jump to column to n
+ - `\e[n;mH` # jump to row n, column m, default: 1,1
+ - `\e[nJ` # n=0: clear the screen forward, n=1: clear backward, n=2 or 3: clear the screen. default 0
+ - `\e[nK` # n=0: clear the line forward, n=1: clear the line backward, n=2: clear the line. default 0
+ - `\e[n;mf` # jump to row n, column m, default: 1,1
+ - `\e[m` # styling codes, optionally suppressed with clear_style: false
+ - `\e[nS` # scroll down n rows, default 1
+ - `\e[nT` # scroll up n rows, default 1
 
 ## Installation
 
