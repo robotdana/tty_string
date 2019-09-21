@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 class TTYString
+  # a grid to draw on
   class Screen
     attr_reader :cursor
 
@@ -43,6 +46,13 @@ class TTYString
 
     def clear_lines_after
       screen.fill([], (row + 1)..-1)
+    end
+
+    def write(string)
+      string.each_char do |char|
+        self[cursor] = char
+        cursor.right
+      end
     end
 
     private

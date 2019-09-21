@@ -1,53 +1,52 @@
-class TTYString
-  class Cursor
-    attr_accessor :row, :col
+# frozen_string_literal: true
 
-    def initialize(row=0, col=0)
+class TTYString
+  # point on a screen. you can move it
+  class Cursor
+    attr_reader :row, :col
+
+    def initialize(row = 0, col = 0)
       @row = row
       @col = col
     end
 
     def row=(value)
       @row = value
-      @row = 0 if @row < 0
+      @row = 0 if @row.negative?
     end
 
     def col=(value)
       @col = value
-      @col = 0 if @col < 0
+      @col = 0 if @col.negative?
     end
 
-    def left(n = 1)
-      n = n.to_i
-      raise ArgumentError unless n >= 0
+    def left(count = 1)
+      raise ArgumentError if count.negative?
 
-      self.col -= n
+      self.col -= count
     end
 
-    def up(n = 1)
-      n = n.to_i
-      raise ArgumentError unless n >= 0
+    def up(count = 1)
+      raise ArgumentError if count.negative?
 
-      self.row -= n
+      self.row -= count
     end
 
-    def down(n = 1)
-      n = n.to_i
-      raise ArgumentError unless n >= 0
+    def down(count = 1)
+      raise ArgumentError unless count >= 0
 
-      self.row += n
+      self.row += count
     end
 
-    def right(n = 1)
-      n = n.to_i
-      raise ArgumentError unless n >= 0
+    def right(count = 1)
+      raise ArgumentError unless count >= 0
 
-      self.col += n
+      self.col += count
     end
 
     def to_ary
       [row, col]
     end
-    alias_method :to_a, :to_ary
+    alias to_a to_ary
   end
 end

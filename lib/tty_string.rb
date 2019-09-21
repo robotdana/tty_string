@@ -4,6 +4,8 @@ require 'strscan'
 require_relative 'tty_string/cursor'
 require_relative 'tty_string/screen'
 
+# Renders a string taking into ANSI escape codes and \t\r\n etc
+# Usage: TTYString.new("this\r\e[Kthat").to_s => "that"
 class TTYString
   def initialize(input_string, ignore_color: false)
     @scanner = StringScanner.new(input_string)
@@ -16,83 +18,92 @@ class TTYString
     screen.to_s
   end
 
-  def render # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
-    until scanner.eos?
-      if scanner.peek(1) == "\b" # can't use scan because /\b/ matches everything.
-        slash_b
-        scanner.pos += 1
-      elsif scanner.skip(/\n/) then slash_n
-      elsif scanner.skip(/\r/) then slash_r
-      elsif scanner.skip(/\t/) then slash_t
-      elsif scanner.skip(/\e/) then slash_e
-      elsif scanner.scan(/[^\e\r\n\t\b]+/)
-        append_screen(scanner.matched)
-      end
-    end
-  end
-
   private
 
-  def slash_e
-    return if scanner.eos?
-    if scanner.skip(/\[/)
-      args = []
-      while scanner.scan(/\d+/)
-        args << scanner.matched
-        scanner.skip(/;/)
-      end
+  attr_reader :screen
+  attr_reader :scanner
+  attr_reader :ignore_color
 
-      if scanner.scan(/[ABCDEFGHJKfm]/)
-        send(:"csi_#{scanner.matched}", *args)
-      else
-        raise "unrecognised csi code \\e[#{args.join(';')}#{scanner.peek(1)}"
-      end
+  def render
+    slash || rest until scanner.eos?
+  end
+
+  def rest
+    screen.write(scanner.matched) if scanner.scan(/[^\e\r\n\t\b]+/)
+  end
+
+  def slash # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    case scanner.peek(1)
+    when "\b" then advance && slash_b
+    when "\n" then advance && slash_n
+    when "\r" then advance && slash_r
+    when "\t" then advance && slash_t
+    when "\e" then advance && slash_e
     end
   end
 
-  def csi_K(n = 0)
-    case n.to_i
+  def advance
+    scanner.pos += 1
+  end
+
+  def slash_e # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    return if scanner.eos?
+
+    return unless scanner.skip(/\[/)
+
+    args = []
+    while scanner.scan(/\d+/)
+      args << scanner.matched
+      scanner.skip(/;/)
+    end
+
+    if scanner.scan(/[ABCDEFGHJKfm]/)
+      raise "unrecognised csi code \\e[#{args.join(';')}#{scanner.peek(1)}"
+    end
+
+    send(:"csi_#{scanner.matched}", *args)
+  end
+
+  # rubocop:disable Naming/MethodName
+  def csi_K(mode = 0) # rubocop:disable Metrics/MethodLength
+    case mode.to_i
     when 0 then screen.clear_line_forward
     when 1 then screen.clear_line_backward
     when 2 then screen.clear_line
-    else
-      raise "unrecognised csi code \\e[#{n}K"
+    else raise "unrecognised csi code \\e[#{mode}K"
     end
   end
 
   def csi_m(*args)
-    append_screen("\e[#{args.join(';')}m") unless ignore_color
+    screen.write("\e[#{args.join(';')}m") unless ignore_color
   end
 
-  def csi_A(n = 1)
-    cursor.up(n)
+  def csi_A(lines = 1)
+    cursor.up(lines)
   end
 
-  def csi_B(n = 1)
-    cursor.down(n)
+  def csi_B(lines = 1)
+    cursor.down(lines)
   end
 
-  def csi_C(n = 1)
-    cursor.right(n)
+  def csi_C(chars = 1)
+    cursor.right(chars)
   end
 
-  def csi_D(n = 1)
-    cursor.left(n)
+  def csi_D(chars = 1)
+    cursor.left(chars)
   end
 
-  def csi_E(n = 1)
-    cursor.down(n)
+  def csi_E(lines = 1)
+    cursor.down(lines)
     cursor.col = 0
   end
 
-  def csi_F(n = 1)
-    cursor.up(n)
+  def csi_F(lines = 1)
+    cursor.up(lines)
     cursor.col = 0
   end
-
-  def csi_G(n = 1)
-
-  end
+  # rubocop:enable Naming/MethodName
 
   def slash_b
     cursor.left
@@ -113,18 +124,7 @@ class TTYString
     cursor.right(8 - (cursor.col % 8))
   end
 
-  attr_reader :screen
-  attr_reader :scanner
-  attr_reader :ignore_color
-
   def cursor
     screen.cursor
-  end
-
-  def append_screen(string)
-    string.each_char do |char|
-      screen[cursor] = char
-      cursor.right
-    end
   end
 end
