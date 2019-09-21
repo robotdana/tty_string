@@ -5,22 +5,22 @@ This is useful for testing CLI's
 
 Supported codes
 
- - \b
- - \e[A
- - \e[B
- - \e[C
- - \e[D
- - \e[E
- - \e[F
- - \e[G
- - \e[H
- - \e[J
- - \e[K
- - \e[f
- - \e[m
- - \n
- - \r
- - \t
+ - `\b`
+ - `\e[A`
+ - `\e[B`
+ - `\e[C`
+ - `\e[D`
+ - `\e[E`
+ - `\e[F`
+ - `\e[G`
+ - `\e[H`
+ - `\e[J`
+ - `\e[K`
+ - `\e[f`
+ - `\e[m`
+ - `\n`
+ - `\r`
+ - `\t`
 
 ## Installation
 
@@ -40,16 +40,16 @@ Or install it yourself as:
 
 ## Usage
 
-```
+```ruby
 TTYString.new("th\ta string\e[3Gis is").to_s => "this is a string"
 ```
 
 Styling information is suppressed by default:
-```
+```ruby
 TTYString.new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s => "this is a string"
 ```
 But can be passed through:
-```
+```ruby
 TTYString.new("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false).to_s => "this is a \e[31mstring\e[0m"
 ```
 
