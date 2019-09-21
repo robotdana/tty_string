@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'cursor'
+
 class TTYString
   # a grid to draw on
   class Screen
@@ -52,7 +54,19 @@ class TTYString
       screen.slice!((row + 1)..-1)
     end
 
+    def clear_backward
+      clear_line_backward
+      clear_lines_before
+    end
+
+    def clear_forward
+      clear_lines_after
+      clear_line_forward
+    end
+
     def write(string)
+      return self[cursor] if string.empty?
+
       string.each_char do |char|
         self[cursor] = char
         cursor.right
