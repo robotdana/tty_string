@@ -7,6 +7,13 @@ RSpec::Matchers.define :render_as do |expected|
   end
 end
 
+RSpec::Matchers.define :render_with_style_as do |expected|
+  match do |actual|
+    @actual = TTYString.new(actual, clear_style: false).to_s
+    expect(@actual).to eq expected
+  end
+end
+
 RSpec.describe TTYString do
   describe '#to_s' do
     it 'can render an empty string' do
@@ -132,6 +139,15 @@ RSpec.describe TTYString do
         end
       end
 
+      describe 'E' do
+        it 'moves the cursor to the beginning of the line 1 line down' do
+          expect("abcd\e[2D\e[Efg").to render_as "abcd\nfg"
+        end
+        it 'moves the cursor to the beginning of the line n lines down' do
+          expect("abcd\e[2D\e[2Efg").to render_as "abcd\n\nfg"
+        end
+      end
+
       describe 'F' do
         it 'moves the cursor to the beginning of the line 1 line p' do
           expect("abcd\nef\e[Fgh").to render_as "ghcd\nef"
@@ -141,9 +157,57 @@ RSpec.describe TTYString do
         end
       end
 
-      describe 'G'
-      describe 'H'
-      describe 'J'
+      describe 'G' do
+        it 'moves the cursor to that column' do
+          expect("abc\e[2Gd").to render_as 'adc'
+        end
+
+        it 'defalts to 1' do
+          expect("abc\e[Gd").to render_as 'dbc'
+        end
+
+        it 'can be given too many ;;;;;' do
+          expect("abc\e[;;;;;;;;;Gd").to render_as 'dbc'
+        end
+      end
+
+      describe 'H' do
+        it 'moves the cursor to that row and column' do
+          expect("abc\ndef\e[2;2HE").to render_as "abc\ndEf"
+        end
+
+        it 'defaults to 1 1' do
+          expect("abc\ndef\e[HA").to render_as "Abc\ndef"
+          expect("abc\ndef\e[;HA").to render_as "Abc\ndef"
+        end
+
+        it 'defaults to 1 for when only 1 argument used' do
+          expect("abc\ndef\e[;2HB").to render_as "aBc\ndef"
+          expect("abc\ndef\e[2;HD").to render_as "abc\nDef"
+        end
+
+        it 'can be given too many ;;;' do
+          expect("abc\ndef\e[;2;;;;;;;;;;;;HB").to render_as "aBc\ndef"
+          expect("abc\ndef\e[2;;;;;;;;;;;;;HD").to render_as "abc\nDef"
+        end
+      end
+
+      describe 'J' do
+        it 'deletes from cursor to end of screen if n is 0' do
+          expect("abc\ndef\nghi\e[2;2H\e[0J").to render_as "abc\nd"
+        end
+        it 'deletes from cursor to end of screen if n is missing' do
+          expect("abc\ndef\nghi\e[2;2H\e[J").to render_as "abc\nd"
+        end
+        it 'deletes from cursor to beginning of screen if n is 1' do
+          expect("abc\ndef\nghi\e[2;2H\e[1J").to render_as "\n  f\nghi"
+        end
+        it 'deletes entire screen if n is 2 or 3' do
+          expect("abc\ndef\nghi\e[2;2H\e[2J").to render_as ''
+          expect("abc\ndef\nghi\e[2;2H\e[3J").to render_as ''
+        end
+      end
+
       describe 'K' do
         it 'deletes the cursor forward' do
           expect("abc\r\e[Kd").to render_as 'd'
@@ -162,9 +226,46 @@ RSpec.describe TTYString do
         end
       end
 
-      describe 'S'
-      describe 'T'
-      describe 'f'
+      describe 'f' do
+        it 'moves the cursor to that row and column' do
+          expect("abc\ndef\e[2;2fE").to render_as "abc\ndEf"
+        end
+
+        it 'defaults to 1 1' do
+          expect("abc\ndef\e[fA").to render_as "Abc\ndef"
+          expect("abc\ndef\e[;fA").to render_as "Abc\ndef"
+        end
+
+        it 'defaults to 1 for when only 1 argument used' do
+          expect("abc\ndef\e[;2fB").to render_as "aBc\ndef"
+          expect("abc\ndef\e[2;fD").to render_as "abc\nDef"
+        end
+
+        it 'can be given too many ;;;' do
+          expect("abc\ndef\e[;2;;;;;;;;;;;;fB").to render_as "aBc\ndef"
+          expect("abc\ndef\e[2;;;;;;;;;;;;;fD").to render_as "abc\nDef"
+        end
+      end
+
+      describe 'm' do
+        it 'strips style codes' do
+          expect("\e[31mred\e[0m plain").to render_as 'red plain'
+        end
+
+        it 'strips style codes with however many ;' do
+          expect("\e[31mred\e[36;37;38;0m plain").to render_as 'red plain'
+        end
+
+        it 'leaves simple style codes untouched when clear_style: false' do
+          expect("\e[31mred\e[0m plain")
+            .to render_with_style_as "\e[31mred\e[0m plain"
+        end
+
+        it 'leaves complex style codes untouched when clear_style: false' do
+          expect("\e[31mred\e[36;37;38;0m plain")
+            .to render_with_style_as "\e[31mred\e[36;37;38;0m plain"
+        end
+      end
       # rubocop:enable RSpec/NestedGroups
     end
   end
