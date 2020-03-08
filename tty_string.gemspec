@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
     Gemfile
     LICENSE.txt
     README.md
-    spellr.gemspec
+    tty_string.gemspec
   }
   spec.required_ruby_version = '>= 2.4'
   spec.require_paths = ['lib']
