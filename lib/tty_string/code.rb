@@ -45,11 +45,11 @@ class TTYString
       @parser = parser
     end
 
+    def action; end
+
     private
 
     attr_reader :parser
-
-    def action; end
 
     def screen
       parser.screen

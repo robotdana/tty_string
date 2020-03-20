@@ -24,6 +24,12 @@ RSpec.describe TTYString do
       expect('a string').to render_as 'a string'
     end
 
+    describe '\a' do
+      it 'drops \a' do
+        expect("ab\ac").to render_as 'abc'
+      end
+    end
+
     describe '\b' do
       it 'backspaces when it meets a \b' do
         expect("ab\bc").to render_as 'ac'
