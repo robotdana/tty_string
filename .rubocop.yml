@@ -101,7 +101,7 @@ Metrics/BlockLength:
     - context
     - it
 
-Metrics/LineLength:
+Layout/LineLength:
   IgnoreCopDirectives: true
 
 Metrics/MethodLength:
