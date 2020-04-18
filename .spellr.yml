@@ -1,0 +1,4 @@
+languages:
+  nonsense:
+    includes:
+      - spec/tty_string_spec.rb

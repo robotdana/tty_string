@@ -12,7 +12,7 @@ AllCops:
   DisplayStyleGuide: true
   TargetRubyVersion: 2.4
 
-# all of the layout customisations are because we prefer indentation to be
+# all of the layout customizations are because we prefer indentation to be
 # always consistently 2 spaces, for blocks, scopes, multiline expressions, etc
 # e.g.
 # class Klass

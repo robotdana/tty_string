@@ -160,7 +160,7 @@ RSpec.describe TTYString do
           expect("abc\e[2Gd").to render_as 'adc'
         end
 
-        it 'defalts to 1' do
+        it 'defaults to 1' do
           expect("abc\e[Gd").to render_as 'dbc'
         end
       end
@@ -199,7 +199,7 @@ RSpec.describe TTYString do
           expect("abc\ndef\nghi\e[2;2H\e[3J").to render_as ''
         end
 
-        it 'returns the original text when given unrecognised arguments' do
+        it 'returns the original text when given unrecognized arguments' do
           expect("abc\ndef\nghi\e[2;2H\e[4J").to render_as "abc\nd\e[4J\nghi"
         end
       end
@@ -221,7 +221,7 @@ RSpec.describe TTYString do
           expect("abcd\e[2K").to render_as ''
         end
 
-        it 'returns the original text when given unrecognised arguments' do
+        it 'returns the original text when given unrecognized arguments' do
           expect("abc\ndef\nghi\e[2;2H\e[3K").to render_as "abc\nd\e[3K\nghi"
         end
       end

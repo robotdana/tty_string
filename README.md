@@ -7,7 +7,7 @@ This is useful for testing CLI's
 
 Various terminals are wildly variously permissive with what they accept,
 so this doesn't even try to cover all possible cases,
-instead it covers the narrowest possible case, and leaves the codes in place when unrecognised
+instead it covers the narrowest possible case, and leaves the codes in place when unrecognized
 
 Supported codes
 
