@@ -4,52 +4,52 @@ require_relative 'csi_code'
 
 class TTYString
   class CSICode
-    class A < TTYString::CSICode
+    class A < TTYString::CSICode # leftovers:allow
       def action(rows = 1)
         cursor.up(rows)
       end
     end
 
-    class B < TTYString::CSICode
+    class B < TTYString::CSICode # leftovers:allow
       def action(rows = 1)
         cursor.down(rows)
       end
     end
 
-    class C < TTYString::CSICode
+    class C < TTYString::CSICode # leftovers:allow
       def action(cols = 1)
         cursor.right(cols)
       end
     end
 
-    class D < TTYString::CSICode
+    class D < TTYString::CSICode # leftovers:allow
       def action(cols = 1)
         cursor.left(cols)
       end
     end
 
-    class E < TTYString::CSICode
+    class E < TTYString::CSICode # leftovers:allow
       def action(rows = 1)
         cursor.down(rows)
         cursor.col = 0
       end
     end
 
-    class F < TTYString::CSICode
+    class F < TTYString::CSICode # leftovers:allow
       def action(rows = 1)
         cursor.up(rows)
         cursor.col = 0
       end
     end
 
-    class G < TTYString::CSICode
+    class G < TTYString::CSICode # leftovers:allow
       def action(col = 1)
         # cursor is zero indexed, arg is 1 indexed
         cursor.col = col.to_i - 1
       end
     end
 
-    class H < TTYString::CSICode
+    class H < TTYString::CSICode # leftovers:allow
       def action(row = 1, col = 1)
         # cursor is zero indexed, arg is 1 indexed
         cursor.row = row.to_i - 1
@@ -57,11 +57,11 @@ class TTYString
       end
     end
 
-    class LowF < TTYString::CSICode::H
+    class LowF < TTYString::CSICode::H # leftovers:allow
       char 'f'
     end
 
-    class J < TTYString::CSICode
+    class J < TTYString::CSICode # leftovers:allow
       default_arg 0
 
       def self.args_re
@@ -79,7 +79,7 @@ class TTYString
       end
     end
 
-    class K < TTYString::CSICode
+    class K < TTYString::CSICode # leftovers:allow
       default_arg 0
 
       def self.arg_re
@@ -97,7 +97,7 @@ class TTYString
       end
     end
 
-    class LowM < TTYString::CSICode
+    class LowM < TTYString::CSICode # leftovers:allow
       char 'm'
 
       def self.arg_re
@@ -112,13 +112,13 @@ class TTYString
       def action(*args); end
     end
 
-    class S < TTYString::CSICode
+    class S < TTYString::CSICode # leftovers:allow
       def action(rows = 1)
         rows.times { screen.scroll_up }
       end
     end
 
-    class T < TTYString::CSICode
+    class T < TTYString::CSICode # leftovers:allow
       def action(rows = 1)
         rows.times { screen.scroll_down }
       end

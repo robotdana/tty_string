@@ -5,11 +5,11 @@ require_relative 'csi_code'
 
 class TTYString
   class Code
-    class SlashA < TTYString::Code
+    class SlashA < TTYString::Code # leftovers:allow
       char "\a"
     end
 
-    class SlashB < TTYString::Code
+    class SlashB < TTYString::Code # leftovers:allow
       char "\b"
 
       def self.match?(scanner)
@@ -26,7 +26,7 @@ class TTYString
       end
     end
 
-    class SlashN < TTYString::Code
+    class SlashN < TTYString::Code # leftovers:allow
       char "\n"
 
       def action
@@ -36,7 +36,7 @@ class TTYString
       end
     end
 
-    class SlashR < TTYString::Code
+    class SlashR < TTYString::Code # leftovers:allow
       char "\r"
 
       def action
@@ -44,7 +44,7 @@ class TTYString
       end
     end
 
-    class SlashT < TTYString::Code
+    class SlashT < TTYString::Code # leftovers:allow
       char "\t"
 
       def action

@@ -39,6 +39,5 @@ class TTYString
     def to_ary
       [row, col]
     end
-    alias to_a to_ary
   end
 end

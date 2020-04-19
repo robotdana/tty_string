@@ -3,6 +3,7 @@ require:
   - rubocop-performance
 
 AllCops:
+  NewCops: enable
   Exclude:
     - db/schema*
     - .bundle/**/*
@@ -175,3 +176,6 @@ Style/HashTransformValues:
 
 RSpec/NestedGroups:
   Max: 4
+
+Style/CommentedKeyword:
+  Enabled: false
