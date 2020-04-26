@@ -2,20 +2,26 @@
 
 RSpec::Matchers.define :render_as do |expected|
   match do |actual|
-    @actual = TTYString.new(actual).to_s
+    @actual = TTYString.parse(actual)
     expect(@actual).to eq expected
   end
 end
 
 RSpec::Matchers.define :render_with_style_as do |expected|
   match do |actual|
-    @actual = TTYString.new(actual, clear_style: false).to_s
+    @actual = TTYString.parse(actual, clear_style: false)
     expect(@actual).to eq expected
   end
 end
 
 RSpec.describe TTYString do
-  describe '#to_s' do
+  describe '.to_proc' do
+    it "can call to_proc. why? don't ask questions" do
+      expect(["ab\bc"].map(&described_class)).to eq ['ac']
+    end
+  end
+
+  describe '.parse' do
     it 'can render an empty string' do
       expect('').to render_as ''
     end

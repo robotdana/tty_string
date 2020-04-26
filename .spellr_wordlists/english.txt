@@ -3,7 +3,9 @@ changelog
 cli
 gemfile
 i'll
+jruby
 klass
+lols
 newline
 nocov
 noninfringement
@@ -14,6 +16,8 @@ rubocop
 rubygems
 rvm
 sherson
+stdlib
+strscan
 sudo
 tmp
 tty

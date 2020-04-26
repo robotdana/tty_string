@@ -1,3 +1,8 @@
+# v1.0.0
+- added TTYString.parse as a shortcut for .new#to_s
+- added TTYString.to_proc for lols
+- added jruby to travis matrix, fortunately it just works™
+
 # v0.2.1
 - fixed a bug with ignoring \a
 
