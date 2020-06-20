@@ -1,3 +1,6 @@
+# v1.0.1
+- test push to rubygems, no functional changes
+
 # v1.0.0
 - added TTYString.parse as a shortcut for .new#to_s
 - added TTYString.to_proc for lols
