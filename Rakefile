@@ -14,5 +14,5 @@ else
   RuboCop::RakeTask.new
   Spellr::RakeTask.generate_task
   Leftovers::RakeTask.generate_task
-  task default: [:spec, :rubocop, :spellr, :leftovers]
+  task default: [:spec, :rubocop, :spellr, :leftovers, :build]
 end
