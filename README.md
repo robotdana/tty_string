@@ -4,6 +4,7 @@
 [![Gem Version](https://badge.fury.io/rb/tty_string.svg)](https://rubygems.org/gems/tty_string)
 
 Render to a string like your terminal does by (narrowly) parsing ANSI TTY codes.
+Intended for use in tests of command line interfaces.
 
 ## Features
 
@@ -12,25 +13,26 @@ Render to a string like your terminal does by (narrowly) parsing ANSI TTY codes.
 
 ## Supported codes
 
- - `\a` # BEL, just removed.
- - `\b` # backspace
- - `\n` # newline
- - `\r` # return, jump to the start of the line
- - `\t` # tab, move to the next multiple-of-8 column
- - `\e[nA` # move up n lines, default: 1
- - `\e[nB` # move down n lines, default: 1
- - `\e[nC` # move right n columns, default: 1
- - `\e[nD` # move left n columns, default: 1
- - `\e[nE` # move down n lines, and to the start of the line, default: 1
- - `\e[nF` # move up n lines, and to the start of the line, default: 1
- - `\e[nG` # jump to column to n
- - `\e[n;mH` # jump to row n, column m, default: 1,1
- - `\e[nJ` # n=0: clear the screen forward, n=1: clear backward, n=2 or 3: clear the screen. default 0
- - `\e[nK` # n=0: clear the line forward, n=1: clear the line backward, n=2: clear the line. default 0
- - `\e[n;mf` # jump to row n, column m, default: 1,1
- - `\e[m` # styling codes, optionally suppressed with `clear_style: false`
- - `\e[nS` # scroll down n rows, default 1
- - `\e[nT` # scroll up n rows, default 1
+| Code | Description | Default |
+|------|-------------|---------|
+| `\a` | bell: suppressed | |
+| `\b` | backspace: clear the character to the left of the cursor and move the cursor back one column | |
+| `\n` | newline: move the cursor to the start of the next line | |
+| `\r` | return: move the cursor to the start of the current line | |
+| `\t` | tab: move the cursor to the next multiple-of-8 column | |
+| `\e[nA` | move the cursor up _n_ lines | _n_=`1` |
+| `\e[nB` | move the cursor down _n_ lines | _n_=`1` |
+| `\e[nC` | move the cursor right _n_ columns | _n_=`1` |
+| `\e[nD` | move the cursor left _n_ columns | _n_=`1` |
+| `\e[nE` | move the cursor down _n_ lines, and to the start of the line | _n_=`1` |
+| `\e[nF` | move the cursor up _n_ lines, and to the start of the line | _n_=`1` |
+| `\e[nG` | move the cursor to column _n_. `1` is left-most column | _n_=`1` |
+| `\e[n;mH` <br> `\e[n;mf` | move the cursor to row _n_, column _m_. `1;1` is top left corner | _n_=`1` _m_=`1` |
+| `\e[nJ` | _n_=`0`: clear the screen from the cursor forward <br>_n_=`1`: clear the screen from the cursor backward <br>_n_=`2` or _n_=`3`: clear the screen | _n_=`0` |
+| `\e[nK` | _n_=`0`: clear the line from the cursor forward <br>_n_=`1`: clear the line from the cursor backward <br>_n_=`2`: clear the line | _n_=`0` |
+| `\e[nS` | scroll up _n_ rows | _n_=`1` |
+| `\e[nT` | scroll down _n_ rows | _n_=`1` |
+| `\e[m` | styling codes: optionally suppressed with `clear_style: false` | |
 
 ## Installation
 
@@ -68,17 +70,17 @@ TTYString.parse("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false)
 
 Just for fun TTYString.to_proc provides the `parse` method as a lambda, so:
 ```ruby
-"th\ta string\e[3Gis is".yield_self(&TTYString)
-=> "this is a string"
+["th\ta string\e[3Gis is"].each(&TTYString)
+=> ["this is a string"]
 ```
 
 ## Limitations
 
-Various terminals are wildly variously permissive with what they accept,
-so this doesn't even try to cover all possible cases,
-instead it covers the narrowest possible case, and leaves the codes in place when unrecognized
+- Various terminals are wildly variously permissive with what they accept,
+  so this doesn't even try to cover all possible cases,
+  instead it covers the narrowest possible case, and leaves the codes in place when unrecognized
 
-`clear_style: false` treats the style codes as regular text which may work differently when rendering codes that move the cursor.
+- `clear_style: false` treats the style codes as regular text which may work differently when rendering codes that move the cursor.
 
 ## Development
 
