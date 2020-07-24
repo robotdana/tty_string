@@ -26,6 +26,5 @@ class TTYString
 
   private
 
-  attr_reader :clear_style
-  attr_reader :parser
+  attr_reader :clear_style, :parser
 end
