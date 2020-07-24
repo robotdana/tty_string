@@ -1,6 +1,6 @@
 # TTYString
 
-[![Build Status](https://travis-ci.com/robotdana/tty_string.svg?branch=master)](https://travis-ci.com/robotdana/tty_string)
+[![Build Status](https://travis-ci.com/robotdana/tty_string.svg?branch=main)](https://travis-ci.com/robotdana/tty_string)
 [![Gem Version](https://badge.fury.io/rb/tty_string.svg)](https://rubygems.org/gems/tty_string)
 
 Render to a string like your terminal does by (narrowly) parsing ANSI TTY codes.
