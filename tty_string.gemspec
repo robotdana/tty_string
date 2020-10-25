@@ -31,13 +31,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'fast_ignore', '>= 0.15.1'
   spec.add_development_dependency 'leftovers', '>= 0.2.0'
   spec.add_development_dependency 'pry', '~> 0.12'
   spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.74'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.4'
-  spec.add_development_dependency 'rubocop-rspec', '~> 1.35'
+  spec.add_development_dependency 'rubocop', '~> 0.93.1'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.8.1'
+  spec.add_development_dependency 'rubocop-rspec', '~> 1.44.1'
   spec.add_development_dependency 'simplecov', '~> 0.18.5'
   spec.add_development_dependency 'spellr', '>= 0.8.1'
 end

@@ -8,7 +8,7 @@ Intended for use in tests of command line interfaces.
 
 ## Features
 
-- supports ruby 2.4 - 2.7, and jruby
+- supports ruby 2.4 - 3.0.0.preview1, and jruby
 - has no dependencies outside ruby stdlib
 
 ## Supported codes
