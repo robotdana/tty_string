@@ -11,6 +11,8 @@ class TTYString
         @@descendants ||= [] # rubocop:disable Style/ClassVars I want it to be shared between subclasses.
         @@descendants << klass
         @@descendants.uniq!
+
+        super
       end
 
       def render(parser)
