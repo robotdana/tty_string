@@ -1,14 +1,21 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-if RUBY_PLATFORM != 'java'
+if ENV['COVERAGE']
   require 'simplecov'
+  require 'simplecov-console'
   if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.5')
     SimpleCov.enable_coverage :branch
     SimpleCov.minimum_coverage line: 100, branch: 100
   else
     SimpleCov.minimum_coverage line: 100
   end
+
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::Console
+  ])
+
   SimpleCov.start
 end
 
