@@ -20,4 +20,5 @@ stdlib
 strscan
 sudo
 tmp
+truffleruby
 tty
