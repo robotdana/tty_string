@@ -1,4 +1,5 @@
 ansi
+arity
 changelog
 cli
 gemfile

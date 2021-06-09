@@ -41,7 +41,12 @@ class TTYString
       end
 
       def max_args
-        @max_args ||= instance_method(:action).arity
+        @max_args ||= begin
+          params = instance_method(:action).parameters
+          return -1 if params.assoc(:rest)
+
+          params.length
+        end
       end
     end
   end

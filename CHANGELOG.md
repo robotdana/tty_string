@@ -1,3 +1,6 @@
+# v1.1.1
+- i forgot how arity works
+
 # v1.1.0
 - suppress bracketed paste mode codes
 
