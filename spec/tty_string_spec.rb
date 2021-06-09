@@ -268,6 +268,13 @@ RSpec.describe TTYString do
         end
       end
 
+      describe '?2004h' do
+        it 'strips bracketed paste mode noise' do
+          expect("\e[?2004h\e[200~echo 'hello'\n\e[201~\e[?2004l")
+            .to render_as "echo 'hello'\n"
+        end
+      end
+
       describe 'S' do
         it 'scrolls up, inserting newlines at the end' do
           expect("abc\ndef\e[S").to render_as "def\n"

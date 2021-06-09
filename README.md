@@ -33,6 +33,10 @@ Intended for use in tests of command line interfaces.
 | `\e[nS` | scroll up _n_ rows | _n_=`1` |
 | `\e[nT` | scroll down _n_ rows | _n_=`1` |
 | `\e[m` | styling codes: optionally suppressed with `clear_style: false` | |
+| `\e[?2004h` | enabled bracketed paste: suppressed | |
+| `\e[?2004l` | disable bracketed paste: suppressed | |
+| `\e[200~` | bracketed paste start: suppressed | |
+| `\e[201~` | bracketed paste end: suppressed | |
 
 ## Installation
 

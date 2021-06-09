@@ -1,3 +1,6 @@
+# v1.1.0
+- suppress bracketed paste mode codes
+
 # v1.0.1
 - test push to rubygems, no functional changes
 

@@ -57,6 +57,10 @@ class TTYString
       end
     end
 
+    class LowH < TTYString::CSICode # leftovers:allow
+      char(/\?2004h/)
+    end
+
     class LowF < TTYString::CSICode::H # leftovers:allow
       char 'f'
     end
@@ -64,7 +68,7 @@ class TTYString
     class J < TTYString::CSICode # leftovers:allow
       default_arg 0
 
-      def self.args_re
+      def self.arg_re
         /[0-3]?/
       end
 
@@ -97,12 +101,16 @@ class TTYString
       end
     end
 
+    class LowL < TTYString::CSICode # leftovers:allow
+      char(/\?2004l/)
+    end
+
     class LowM < TTYString::CSICode # leftovers:allow
       char 'm'
 
       def self.arg_re
         # 0-255
-        /(\d|\d\d|1\d\d|2[0-4]\d|25[0-5])?/
+        /(?:\d|\d\d|1\d\d|2[0-4]\d|25[0-5])?/
       end
 
       def self.render(renderer)
@@ -122,6 +130,10 @@ class TTYString
       def action(rows = 1)
         rows.times { screen.scroll_down }
       end
+    end
+
+    class Tilde < TTYString::CSICode # leftovers:allow
+      char(/(?:200|201)~/)
     end
   end
 end

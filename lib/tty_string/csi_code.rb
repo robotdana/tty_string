@@ -17,18 +17,21 @@ class TTYString
       end
 
       def args(parser)
-        parser.matched.slice(2..-2).split(';')
-          .map { |n| n.empty? ? default_arg : n.to_i }
+        a = parser.matched.slice(2..-2).split(';')
+        a = a.slice(0, max_args) unless max_args == -1
+        a.map! { |n| n.empty? ? default_arg : n.to_i }
+        a
       end
 
       def re
         @re ||= /\e\[#{args_re}#{char}/
       end
 
-      def args_re
+      def args_re # rubocop:disable Metrics/MethodLength
         case max_args
+        when 0 then nil
         when 1 then /#{arg_re}?/
-        when nil then /(#{arg_re}?(;#{arg_re})*)?/
+        when -1 then /(#{arg_re}?(;#{arg_re})*)?/
         else /(#{arg_re}?(;#{arg_re}){0,#{max_args - 1}})?/
         end
       end
@@ -38,12 +41,7 @@ class TTYString
       end
 
       def max_args
-        @max_args ||= begin
-          params = instance_method(:action).parameters
-          return if params.assoc(:rest)
-
-          params.length
-        end
+        @max_args ||= instance_method(:action).arity
       end
     end
   end
