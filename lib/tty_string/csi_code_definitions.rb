@@ -2,63 +2,103 @@
 
 require_relative 'csi_code'
 
-class TTYString
+module TTYString
   class CSICode
     class A < TTYString::CSICode # leftovers:allow
-      def action(rows = 1)
-        cursor.up(rows)
+      def action(rows = '1')
+        rows = integer(rows)
+        cursor.up(rows) if rows
       end
     end
 
     class B < TTYString::CSICode # leftovers:allow
-      def action(rows = 1)
-        cursor.down(rows)
+      default_arg '1'
+
+      def action(rows = '1')
+        rows = integer(rows)
+        cursor.down(rows) if rows
       end
     end
 
     class C < TTYString::CSICode # leftovers:allow
-      def action(cols = 1)
-        cursor.right(cols)
+      default_arg 1
+
+      def action(cols = '1')
+        cols = integer(cols)
+        cursor.right(cols) if cols
       end
     end
 
     class D < TTYString::CSICode # leftovers:allow
-      def action(cols = 1)
-        cursor.left(cols)
+      default_arg '1'
+
+      def action(cols = '1')
+        cols = integer(cols)
+        cursor.left(cols) if cols
       end
     end
 
     class E < TTYString::CSICode # leftovers:allow
-      def action(rows = 1)
+      default_arg '1'
+
+      def action(rows = '1')
+        rows = integer(rows)
+        return unless rows
+
         cursor.down(rows)
         cursor.col = 0
       end
     end
 
     class F < TTYString::CSICode # leftovers:allow
-      def action(rows = 1)
+      default_arg '1'
+
+      def action(rows = '1')
+        rows = integer(rows)
+        return unless rows
+
         cursor.up(rows)
         cursor.col = 0
       end
     end
 
     class G < TTYString::CSICode # leftovers:allow
-      def action(col = 1)
+      default_arg '1'
+
+      def action(col = '1')
+        col = integer(col)
+        return unless col
+
         # cursor is zero indexed, arg is 1 indexed
-        cursor.col = col.to_i - 1
+        cursor.col = col - 1
       end
     end
 
     class H < TTYString::CSICode # leftovers:allow
-      def action(row = 1, col = 1)
+      default_arg '1'
+
+      def action(row = '1', col = '1')
+        col = integer(col)
+        row = integer(row)
+        return unless col && row
+
         # cursor is zero indexed, arg is 1 indexed
-        cursor.row = row.to_i - 1
-        cursor.col = col.to_i - 1
+        cursor.row = row - 1
+        cursor.col = col - 1
       end
     end
 
     class LowH < TTYString::CSICode # leftovers:allow
-      char(/\?2004h/)
+      char('h')
+
+      def action(code)
+        case code
+        when '?5', '?25', '?1004', '?1049', '?2004'
+          # drop
+        else
+          parser.unknown
+        end
+      end
     end
 
     class LowF < TTYString::CSICode::H # leftovers:allow
@@ -66,74 +106,70 @@ class TTYString
     end
 
     class J < TTYString::CSICode # leftovers:allow
-      default_arg 0
-
-      def self.arg_re
-        /[0-3]?/
-      end
-
-      def action(mode = 0)
-        # :nocov: else won't ever be called. don't worry about it
+      def action(mode = '0') # rubocop:disable Metrics/MethodLength
         case mode
-        # :nocov:
-        when 0 then screen.clear_forward
-        when 1 then screen.clear_backward
-        when 2, 3 then screen.clear
+        when '0' then screen.clear_forward
+        when '1' then screen.clear_backward
+        when '2', '3' then screen.clear
+        else parser.unknown
         end
       end
     end
 
     class K < TTYString::CSICode # leftovers:allow
-      default_arg 0
-
-      def self.arg_re
-        /[0-2]?/
-      end
-
-      def action(mode = 0)
-        # :nocov: else won't ever be called. don't worry about it
+      def action(mode = '0') # rubocop:disable Metrics/MethodLength
         case mode
-        # :nocov:
-        when 0 then screen.clear_line_forward
-        when 1 then screen.clear_line_backward
-        when 2 then screen.clear_line
+        when '0' then screen.clear_line_forward
+        when '1' then screen.clear_line_backward
+        when '2' then screen.clear_line
+        else parser.unknown
         end
       end
     end
 
-    class LowL < TTYString::CSICode # leftovers:allow
-      char(/\?2004l/)
+    class LowL < TTYString::CSICode::LowH # leftovers:allow
+      char('l')
     end
 
     class LowM < TTYString::CSICode # leftovers:allow
       char 'm'
 
-      def self.arg_re
-        # 0-255
-        /(?:\d|\d\d|1\d\d|2[0-4]\d|25[0-5])?/
+      def action(arg = '0', *args)
+        screen.style(args.unshift(arg))
       end
-
-      def self.render(renderer)
-        super if renderer.clear_style
-      end
-
-      def action(*args); end
     end
 
     class S < TTYString::CSICode # leftovers:allow
-      def action(rows = 1)
-        rows.times { screen.scroll_up }
+      def action(rows = '1')
+        integer(rows)&.times { screen.scroll_up }
       end
     end
 
     class T < TTYString::CSICode # leftovers:allow
-      def action(rows = 1)
-        rows.times { screen.scroll_down }
+      def action(rows = '1')
+        integer(rows)&.times { screen.scroll_down }
       end
     end
 
     class Tilde < TTYString::CSICode # leftovers:allow
-      char(/(?:200|201)~/)
+      char('~')
+
+      def action(arg)
+        case arg
+        when '200', '201'
+          # bracketed paste
+        else
+          parser.unknown
+        end
+      end
+    end
+
+    class Unknown < TTYString::CSICode # leftovers:allow
+      char(/[@-~]/)
+
+      def action(*)
+        parser.unknown
+      end
     end
   end
 end

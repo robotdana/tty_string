@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class TTYString
-  VERSION = '1.1.1'
+module TTYString
+  VERSION = '2.0.0'
 end

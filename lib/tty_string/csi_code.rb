@@ -2,12 +2,12 @@
 
 require_relative 'code'
 
-class TTYString
+module TTYString
   class CSICode < TTYString::Code
     class << self
       def default_arg(value = nil)
         @default_arg ||= value
-        @default_arg || 1
+        @default_arg || '0'
       end
 
       private
@@ -19,7 +19,7 @@ class TTYString
       def args(parser)
         a = parser.matched.slice(2..-2).split(';')
         a = a.slice(0, max_args) unless max_args == -1
-        a.map! { |n| n.empty? ? default_arg : n.to_i }
+        a.map! { |n| n.empty? ? default_arg : n }
         a
       end
 
@@ -27,17 +27,12 @@ class TTYString
         @re ||= /\e\[#{args_re}#{char}/
       end
 
-      def args_re # rubocop:disable Metrics/MethodLength
+      def args_re
         case max_args
-        when 0 then nil
-        when 1 then /#{arg_re}?/
-        when -1 then /(#{arg_re}?(;#{arg_re})*)?/
-        else /(#{arg_re}?(;#{arg_re}){0,#{max_args - 1}})?/
+        when 0, 1 then /(?:[0-:<-?]*){0,#{max_args}}/
+        when -1 then %r{[0-?]*[ -/]*}
+        else /(?:(?:[0-:<-?]*)?(?:;(?:[0-:<-?]*)?){0,#{max_args - 1}})?/
         end
-      end
-
-      def arg_re
-        /\d*/
       end
 
       def max_args
@@ -48,6 +43,12 @@ class TTYString
           params.length
         end
       end
+    end
+
+    def integer(value)
+      return value.to_i if value.match?(/\A\d+\z/)
+
+      parser.unknown
     end
   end
 end

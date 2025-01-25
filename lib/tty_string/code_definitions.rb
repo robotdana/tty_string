@@ -3,7 +3,7 @@
 require_relative 'code'
 require_relative 'csi_code'
 
-class TTYString
+module TTYString
   class Code
     class SlashA < TTYString::Code # leftovers:allow
       char "\a"
@@ -32,7 +32,7 @@ class TTYString
       def action
         cursor.down
         cursor.col = 0
-        screen.write('')
+        screen.ensure_row
       end
     end
 

@@ -1,29 +1,38 @@
 # frozen_string_literal: true
 
 require_relative 'cursor'
+require_relative 'cell'
+require_relative 'style'
 
-class TTYString
+module TTYString
   # a grid to draw on
   class Screen
     attr_reader :cursor
 
-    def initialize
+    def initialize(initial_style:)
       @cursor = Cursor.new
       @screen = []
+      @current_style = @initial_style = initial_style
     end
 
-    def to_s
-      screen.map { |c| Array(c).map { |x| x || ' ' }.join.rstrip }.join("\n")
+    def to_s # rubocop:disable Metrics/MethodLength
+      style_context = initial_style
+      screen.map do |row|
+        Array(row).map do |cell|
+          if cell
+            value = cell.to_s(style_context: style_context)
+            style_context = cell.style
+            value
+          else
+            ' '
+          end
+        end.join.rstrip
+      end.join("\n") + current_style.to_s(context: style_context)
     end
 
-    def []=((row, col), *value)
+    def []=((row, col), value)
       screen[row] ||= []
-      screen[row][col] = value.flatten(1)
-    end
-
-    def []((row, col))
-      screen[row] ||= []
-      screen[row][col]
+      screen[row][col] = value
     end
 
     def clear_at_cursor
@@ -74,18 +83,25 @@ class TTYString
       clear_line_forward
     end
 
-    def write(string)
-      return self[cursor] if string.empty?
+    def ensure_row
+      screen[row] ||= []
+    end
 
+    def write(string)
       string.each_char do |char|
-        self[cursor] = char
+        self[cursor] = Cell.new(char, style: current_style)
         cursor.right
       end
     end
 
+    def style(style_codes)
+      self.current_style = current_style.new(style_codes)
+    end
+
     private
 
-    attr_reader :screen
+    attr_reader :screen, :initial_style
+    attr_accessor :current_style
 
     def row
       cursor.row

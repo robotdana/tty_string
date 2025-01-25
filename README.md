@@ -32,11 +32,20 @@ Intended for use in tests of command line interfaces.
 | `\e[nK` | _n_=`0`: clear the line from the cursor forward <br>_n_=`1`: clear the line from the cursor backward <br>_n_=`2`: clear the line | _n_=`0` |
 | `\e[nS` | scroll up _n_ rows | _n_=`1` |
 | `\e[nT` | scroll down _n_ rows | _n_=`1` |
-| `\e[m` | styling codes: optionally suppressed with `clear_style: false` | |
-| `\e[?2004h` | enabled bracketed paste: suppressed | |
-| `\e[?2004l` | disable bracketed paste: suppressed | |
-| `\e[200~` | bracketed paste start: suppressed | |
-| `\e[201~` | bracketed paste end: suppressed | |
+| `\e[m` | styling codes: dropped with `style: :drop` (default), rendered with `style: :render`. | |
+| `\e[?5h` | reverse the screen: dropped | |
+| `\e[?5l` | normal the screen: dropped | |
+| `\e[?25h` | show the cursor: dropped | |
+| `\e[?25l` | hide the cursor: dropped | |
+| `\e[?1004h` | enable reporting focus: dropped | |
+| `\e[?1004l` | disable reporting focus: dropped | |
+| `\e[?1049h` | enable alternate screen buffer: dropped | |
+| `\e[?1049l` | disable alternate screen buffer: dropped | |
+| `\e[?2004h` | enable bracketed paste mode: dropped | |
+| `\e[?2004l` | disable bracketed paste mode: dropped | |
+| `\e[200~` | bracketed paste start: dropped | |
+| `\e[201~` | bracketed paste end: dropped | |
+| `\e[` | any other valid CSI code: dropped with `unknown: :drop` (default), raises TTYString::Error with `unknown: :raise`. | |
 
 ## Installation
 
@@ -61,14 +70,19 @@ TTYString.parse("th\ta string\e[3Gis is")
 => "this is a string"
 ```
 
-Styling information is suppressed by default:
+Styling information is dropped by default:
 ```ruby
 TTYString.parse("th\ta \e[31mstring\e[0m\e[3Gis is")
 => "this is a string"
 ```
-But can be passed through:
+But can be rendered:
 ```ruby
-TTYString.parse("th\ta \e[31mstring\e[0m\e[3Gis is", clear_style: false)
+TTYString.parse("th\ta \e[31mstring\e[0m\e[3Gis is", style: :render)
+=> "this is a \e[31mstring\e[0m"
+```
+
+```ruby
+TTYString.parse("th\ta \e[31mstring\e[0m\e[3Gis is", style: :render)
 => "this is a \e[31mstring\e[0m"
 ```
 
@@ -81,10 +95,7 @@ Just for fun TTYString.to_proc provides the `parse` method as a lambda, so:
 ## Limitations
 
 - Various terminals are wildly variously permissive with what they accept,
-  so this doesn't even try to cover all possible cases,
-  instead it covers the narrowest possible case, and leaves the codes in place when unrecognized
-
-- `clear_style: false` treats the style codes as regular text which may work differently when rendering codes that move the cursor.
+  so this doesn't even try to cover all possible cases
 
 ## Development
 

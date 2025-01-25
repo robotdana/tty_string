@@ -1,3 +1,12 @@
+# v2.0.0
+- TTYString is now a module not a class.
+- Address the issue where preserved styles and unknown codes would cause the cursor to be misaligned when moving, and potentially overwriting styles unexpectedly:
+  - `clear_style: false` is now `style: TTYString::RENDER`, which modifies styles to display as they would rather than just passing them through them unprocessed
+  - `clear_style: true` is now `style: TTYString::DROP` (and still the default)
+  - Unknown codes are now dropped by default
+  - it's now possible to set `unknown: TTYString::RAISE` to raise on unrecognized CSI codes (`unknown: TTYString::DROP` is the default)
+- drop more codes that are known to do nothing for the display of text `\e[?5l`,`\e[?5h`,`\e[?25l`,`\e[?25h`,`\e[?1004l`,`\e[?1004h`,`\e[?1049l`,`\e[?1049h`
+
 # v1.1.1
 - i forgot how arity works
 

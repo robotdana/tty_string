@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TTYString
+module TTYString
   class Code
     class << self
       def descendants

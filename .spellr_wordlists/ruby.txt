@@ -1,4 +1,5 @@
 cov
+cyclomatic
 rspec
 rubo
 rubocop

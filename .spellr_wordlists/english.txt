@@ -2,6 +2,7 @@ ansi
 arity
 changelog
 cli
+csi
 gemfile
 i'll
 jruby
@@ -23,3 +24,4 @@ sudo
 tmp
 truffleruby
 tty
+unstyled

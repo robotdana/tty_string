@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TTYString
+module TTYString
   # point on a screen. you can move it
   class Cursor
     attr_reader :row, :col

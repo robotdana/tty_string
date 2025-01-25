@@ -30,7 +30,8 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.4'
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'base64'
+  spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'fast_ignore', '>= 0.15.1'
   spec.add_development_dependency 'leftovers', '>= 0.2.0'
   spec.add_development_dependency 'pry', '~> 0.12'
