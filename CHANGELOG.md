@@ -1,3 +1,6 @@
+# v2.0.1
+- Fix regexp warning
+
 # v2.0.0
 - TTYString is now a module not a class.
 - Address the issue where preserved styles and unknown codes would cause the cursor to be misaligned when moving, and potentially overwriting styles unexpectedly:

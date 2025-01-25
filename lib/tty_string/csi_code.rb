@@ -27,11 +27,14 @@ module TTYString
         @re ||= /\e\[#{args_re}#{char}/
       end
 
-      def args_re
+      def args_re # rubocop:disable Metrics/MethodLength
         case max_args
-        when 0, 1 then /(?:[0-:<-?]*){0,#{max_args}}/
+          # :nocov:
+        when 0 then nil
+          # :nocov:
+        when 1 then /[0-:<-?]*/
         when -1 then %r{[0-?]*[ -/]*}
-        else /(?:(?:[0-:<-?]*)?(?:;(?:[0-:<-?]*)?){0,#{max_args - 1}})?/
+        else /(?:(?:[0-:<-?]*)(?:;(?:[0-:<-?]*)){0,#{max_args - 1}})?/
         end
       end
 
