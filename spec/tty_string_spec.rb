@@ -397,7 +397,7 @@ RSpec.describe TTYString do
 
         it 'removes unnecessary reset codes' do
           expect("\e[31mred\e[0m\e[32m green\e[0m \e[0m")
-            .to render_with_style_as "\e[31mred\e[32m green\e[0m"
+            .to render_with_style_as "\e[31mred\e[32m green\e[0m "
         end
 
         it 'removes unnecessary color code overriding previous ones' do
@@ -412,7 +412,7 @@ RSpec.describe TTYString do
 
         it 'assumes the string begins reset' do
           expect("     \e[31mred \r\e[0mplain")
-            .to render_with_style_as "plain\e[31mred\e[0m"
+            .to render_with_style_as "plain\e[31mred \e[0m"
         end
 
         it 'renders 24bit color codes' do
@@ -471,6 +471,18 @@ RSpec.describe TTYString do
                                   style: described_class::RENDER,
                                   unknown: described_class::RAISE)
           end.to raise_error described_class::UnknownCodeError, 'Unknown style code "256" in "\e[38;5;256m"'
+        end
+
+        it 'puts the newline in the right place' do
+          expect("dog \e[1;31mcat\e[0m\n").to render_with_style_as(
+            "dog \e[1;31mcat\e[0m\n"
+          )
+        end
+
+        it 'fills clears with styled spaces' do
+          expect("abcd\033[2D\033[41m\033[1K\033[0m").to render_with_style_as(
+            "\e[41m   \e[0md"
+          )
         end
       end
 

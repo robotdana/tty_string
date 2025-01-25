@@ -3,6 +3,7 @@
 require_relative 'cursor'
 require_relative 'cell'
 require_relative 'style'
+require_relative 'row'
 
 module TTYString
   # a grid to draw on
@@ -15,40 +16,49 @@ module TTYString
       @current_style = @initial_style = initial_style
     end
 
-    def to_s # rubocop:disable Metrics/MethodLength
+    def to_s # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       style_context = initial_style
-      screen.map do |row|
-        Array(row).map do |cell|
+      str = +''
+      screen.each_with_index do |row, index|
+        unless index.zero?
+          str << row.newline_style.to_s(context: style_context) if row
+          str << "\n"
+          style_context = row.newline_style if row
+        end
+
+        Array(row).each do |cell|
           if cell
-            value = cell.to_s(style_context: style_context)
+            str << cell.style.to_s(context: style_context)
+            str << cell.value
             style_context = cell.style
-            value
           else
-            ' '
+            str << ' '
           end
-        end.join.rstrip
-      end.join("\n") + current_style.to_s(context: style_context)
+        end
+      end
+      str << current_style.to_s(context: style_context)
+      str
     end
 
     def []=((row, col), value)
-      screen[row] ||= []
+      screen[row] ||= Row.new(newline_style: current_style)
       screen[row][col] = value
     end
 
     def clear_at_cursor
-      self[cursor] = nil
+      self[cursor] = Cell.new(' ', style: current_style)
     end
 
     def clear_line_forward
-      screen[row].fill(nil, col..-1)
+      screen[row].slice!(col..-1)
     end
 
     def clear_line_backward
-      screen[row].fill(nil, 0..col)
+      screen[row].fill(Cell.new(' ', style: current_style), 0..col)
     end
 
     def clear_line
-      screen[row] = []
+      screen[row] = Row.new(newline_style: current_style)
     end
 
     def clear
@@ -56,17 +66,17 @@ module TTYString
     end
 
     def scroll_up
-      screen.push([])
+      screen.push(Row.new(newline_style: current_style))
       screen.shift
     end
 
     def scroll_down
-      screen.unshift([])
+      screen.unshift(Row.new(newline_style: current_style))
       screen.pop
     end
 
     def clear_lines_before
-      screen.fill([], 0...row)
+      screen.fill(Row.new(newline_style: current_style), 0...row)
     end
 
     def clear_lines_after
@@ -84,7 +94,7 @@ module TTYString
     end
 
     def ensure_row
-      screen[row] ||= []
+      screen[row] ||= Row.new(newline_style: current_style)
     end
 
     def write(string)

@@ -1,3 +1,6 @@
+# v2.0.2
+- Improve whitespace handling
+
 # v2.0.1
 - Fix warning
 
