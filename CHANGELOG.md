@@ -1,5 +1,5 @@
 # v2.0.1
-- Fix regexp warning
+- Fix warning
 
 # v2.0.0
 - TTYString is now a module not a class.
