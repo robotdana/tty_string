@@ -1,3 +1,6 @@
+# v2.0.3
+- Improve whitespace handling more
+
 # v2.0.2
 - Improve whitespace handling
 

@@ -12,7 +12,7 @@ module TTYString
 
     def initialize(initial_style:)
       @cursor = Cursor.new
-      @screen = []
+      @screen = [Row.new(newline_style: initial_style)]
       @current_style = @initial_style = initial_style
     end
 

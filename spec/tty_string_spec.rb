@@ -479,6 +479,12 @@ RSpec.describe TTYString do
           )
         end
 
+        it 'puts the newline in the right place when scrolling' do
+          expect("\033[1;41mcat\n\n\n\033[0m\033[3T").to render_with_style_as(
+            "\n\n\n\e[1;41mcat\e[0m"
+          )
+        end
+
         it 'fills clears with styled spaces' do
           expect("abcd\033[2D\033[41m\033[1K\033[0m").to render_with_style_as(
             "\e[41m   \e[0md"
