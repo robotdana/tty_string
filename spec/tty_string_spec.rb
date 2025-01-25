@@ -406,8 +406,8 @@ RSpec.describe TTYString do
         end
 
         it 'renders the end of the string with the last written color code' do
-          expect("      plain\e[31m\e[9D.red")
-            .to render_with_style_as " .\e[31mred\e[0m plain\e[31m"
+          expect("      plain\e[31m\e[10D.red")
+            .to render_with_style_as " \e[31m.red\e[0m plain\e[31m"
         end
 
         it 'assumes the string begins reset' do
