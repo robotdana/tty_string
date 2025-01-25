@@ -17,7 +17,7 @@ module TTYString
     def to_s(context:)
       return '' if self == context
 
-      values = properties.filter_map { |k, v| v if context.properties[k] != v }.uniq
+      values = properties.map { |k, v| v if context.properties[k] != v }.compact.uniq
       return '' if values.empty?
 
       "\e[#{values.join(';')}m"
